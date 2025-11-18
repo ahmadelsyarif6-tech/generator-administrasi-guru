@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Input, Button, Loader, DataListInput } from '../../components/UI';
+import { Card, Input, Button, Loader, DataListInput, Select } from '../../components/UI';
 import { generateTextContent } from '../../services/geminiService';
 import { Sparkles, CheckSquare, Square, Calendar } from 'lucide-react';
 import { SUBJECTS, TEACHERS } from '../../utils/data';
@@ -24,7 +25,8 @@ const AdminGenerator: React.FC = () => {
     guru: '',
     topik: '',
     modeCerdas: false,
-    deadline: ''
+    deadline: '',
+    bahasa: 'Bahasa Indonesia'
   });
   
   const [selectedDocTypes, setSelectedDocTypes] = useState<string[]>(['Modul Ajar']);
@@ -62,12 +64,14 @@ const AdminGenerator: React.FC = () => {
     - Mata Pelajaran: ${formData.mapel}
     - Guru Pengampu: ${formData.guru}
     - Topik/Materi: ${formData.topik}
+    - Bahasa Dokumen: ${formData.bahasa}
     
     Instruksi Format:
     1. Buatkan SEMUA jenis dokumen yang diminta di atas dalam satu respon ini.
     2. Pisahkan setiap dokumen dengan tag <hr> dan Judul Dokumen (<h1>) yang jelas agar mudah dibaca.
     3. Gunakan format HTML yang rapi dengan tabel (border css inline) jika diperlukan.
-    ${formData.modeCerdas ? '4. Sertakan analisis mendalam, strategi pembelajaran diferensiasi, dan profil pelajar pancasila untuk setiap bagian yang relevan.' : ''}
+    4. PENTING: Gunakan ${formData.bahasa} untuk seluruh isi konten dokumen (kecuali istilah teknis yang tidak bisa diterjemahkan).
+    ${formData.modeCerdas ? '5. Sertakan analisis mendalam, strategi pembelajaran diferensiasi, dan profil pelajar pancasila untuk setiap bagian yang relevan.' : ''}
     
     Output hanya kode HTML body content (tanpa <html> atau <head>).`;
 
@@ -129,6 +133,17 @@ const AdminGenerator: React.FC = () => {
                         onChange={(e) => setFormData({...formData, kelas: e.target.value})}
                     />
                 </div>
+
+                <Select 
+                    label="Bahasa Dokumen" 
+                    value={formData.bahasa} 
+                    onChange={(e) => setFormData({...formData, bahasa: e.target.value})}
+                >
+                    <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                    <option value="Bahasa Arab">Bahasa Arab (العربية)</option>
+                    <option value="Bahasa Inggris">Bahasa Inggris (English)</option>
+                    <option value="Bahasa Sunda">Bahasa Sunda</option>
+                </Select>
 
                 <DataListInput 
                     label="Mata Pelajaran"

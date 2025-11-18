@@ -18,6 +18,7 @@ const QuestionBankGenerator: React.FC = () => {
     topik: '',
     difficulty: 'Sedang',
     pgOptionCount: '5', // Default 5 options for SMA
+    bahasa: 'Bahasa Indonesia'
   });
 
   // Specific counts for SMA/SMP checklist system
@@ -90,6 +91,7 @@ const QuestionBankGenerator: React.FC = () => {
     - Kelas: **${formData.kelas}**
     - Mata Pelajaran: **${formData.mapel}**
     - Topik: **${formData.topik}**
+    - Bahasa Soal: **${formData.bahasa}**
     
     ${distributionPrompt}
 
@@ -118,6 +120,8 @@ const QuestionBankGenerator: React.FC = () => {
 
     TUGAS ANDA ADALAH MENGHASILKAN 6 BAGIAN DOKUMEN DALAM SATU OUTPUT HTML.
     Pisahkan setiap bagian dengan tag <hr> dan <h2 style="color:#4f46e5; border-bottom:2px solid #ddd; padding-bottom:10px; margin-top:30px;">Judul Bagian</h2>.
+    
+    **PENTING:** Pastikan seluruh soal, kunci jawaban, dan materi menggunakan **${formData.bahasa}**.
 
     Bagian-bagian yang WAJIB ada (Berurutan):
 
@@ -206,6 +210,17 @@ const QuestionBankGenerator: React.FC = () => {
                   required
               />
           </div>
+          
+          <Select 
+            label="Bahasa Soal" 
+            value={formData.bahasa} 
+            onChange={(e) => setFormData({...formData, bahasa: e.target.value})}
+          >
+            <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+            <option value="Bahasa Arab">Bahasa Arab (العربية)</option>
+            <option value="Bahasa Inggris">Bahasa Inggris (English)</option>
+            <option value="Bahasa Sunda">Bahasa Sunda</option>
+          </Select>
 
           <DataListInput 
             label="Mata Pelajaran"

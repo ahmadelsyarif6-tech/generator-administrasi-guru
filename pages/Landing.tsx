@@ -1,9 +1,31 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Button, Modal, Select, Loader, DataListInput } from '../components/UI';
 import { Cpu, Layers, ShieldCheck } from 'lucide-react';
 import { TEACHERS } from '../utils/data';
+
+// Komponen Ornamen Islami (SVG) sebagai fallback
+const IslamicOrnament = ({ className }: { className?: string }) => (
+    <svg viewBox="0 0 200 200" className={className} xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#fbbf24" />
+                <stop offset="100%" stopColor="#d97706" />
+            </linearGradient>
+        </defs>
+        {/* Octagram (Rub el Hizb style base) */}
+        <rect x="50" y="50" width="100" height="100" fill="none" stroke="url(#goldGrad)" strokeWidth="2" transform="rotate(45 100 100)" />
+        <rect x="50" y="50" width="100" height="100" fill="none" stroke="url(#goldGrad)" strokeWidth="2" />
+        
+        {/* Central Calligraphy Abstract */}
+        <path d="M100 40 C120 40 130 60 130 80 C130 110 100 140 100 160 C100 140 70 110 70 80 C70 60 80 40 100 40" fill="#10b981" opacity="0.2" />
+        <text x="100" y="110" fontSize="40" fontWeight="bold" fill="url(#goldGrad)" textAnchor="middle" fontFamily="serif">﷽</text>
+        
+        <circle cx="100" cy="100" r="60" stroke="#10b981" strokeWidth="1" strokeDasharray="4 4" opacity="0.5"/>
+    </svg>
+);
 
 const Landing: React.FC = () => {
   const navigate = useNavigate();
@@ -13,6 +35,9 @@ const Landing: React.FC = () => {
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Logo State
+  const [imgError, setImgError] = useState(false);
 
   // Form State
   const [name, setName] = useState('');
@@ -78,7 +103,7 @@ const Landing: React.FC = () => {
       </nav>
 
       <header className="container mx-auto px-6 py-20 md:py-32 grid md:grid-cols-2 gap-12 items-center">
-        <div>
+        <div className="order-2 md:order-1">
             <h1 className="text-5xl md:text-6xl font-bold leading-tight mb-6">
                 Generator <span className="text-yellow-500">Administrasi Guru</span> & Bank Soal Adaptif
             </h1>
@@ -92,14 +117,23 @@ const Landing: React.FC = () => {
                 <Button variant="outline" className="h-12 px-8 text-lg">Pelajari Lebih Lanjut</Button>
             </div>
         </div>
-        <div className="relative flex justify-center">
-            <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500 to-green-500 rounded-full blur-[100px] opacity-30 animate-pulse"></div>
-            <img 
-                src="/logo.png" 
-                onError={(e) => {e.currentTarget.src = 'https://placehold.co/400x400/0f172a/10b981?text=Logo+YPI+Al-Ghozali';}}
-                alt="Logo YPI Al-Ghozali" 
-                className="relative z-10 w-auto h-[300px] md:h-[400px] object-contain drop-shadow-2xl mx-auto hover:scale-105 transition-transform duration-500"
-            />
+        <div className="relative flex justify-center order-1 md:order-2">
+            <div className="absolute inset-0 bg-gradient-to-tr from-emerald-500/20 to-amber-500/20 rounded-full blur-[100px] animate-pulse"></div>
+            
+            {/* Calligraphy/Mecca Display Logic */}
+            <div className="relative z-10 w-[300px] h-[300px] md:w-[450px] md:h-[450px] flex items-center justify-center drop-shadow-2xl hover:scale-105 transition-transform duration-500 rounded-2xl overflow-hidden border-4 border-slate-800/50">
+                {!imgError ? (
+                    <img 
+                        src="https://images.unsplash.com/photo-1519817650390-64a93db51149?q=80&w=1000&auto=format&fit=crop" 
+                        onError={() => setImgError(true)}
+                        alt="Masjidil Haram, Mekkah" 
+                        className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity duration-500"
+                    />
+                ) : (
+                    <IslamicOrnament className="w-full h-full p-10" />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent pointer-events-none"></div>
+            </div>
         </div>
       </header>
 
