@@ -1,9 +1,10 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { 
   LayoutDashboard, FileText, BookOpen, Video, 
-  Image, Mic, LogOut, User, Menu, Settings
+  Image, Mic, LogOut, User, Menu, Settings, ScrollText
 } from 'lucide-react';
 
 const SidebarItem = ({ icon: Icon, label, path, active }: any) => (
@@ -23,7 +24,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const navItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/' },
     { icon: FileText, label: 'Administrasi Guru', path: '/generator/administrasi' },
-    { icon: BookOpen, label: 'Bank Soal', path: '/generator/bank-soal' },
+    { icon: BookOpen, label: 'Bank Soal Umum', path: '/generator/bank-soal' },
+    { icon: ScrollText, label: 'Bank Soal Pesantren', path: '/generator/bank-soal-pesantren' },
     { icon: Video, label: 'E-Course', path: '/generator/ecourse' },
     { icon: Mic, label: 'Lab Audio', path: '/lab/audio' },
     { icon: Video, label: 'Lab Video', path: '/lab/video' },

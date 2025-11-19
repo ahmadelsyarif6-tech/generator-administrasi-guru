@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -6,6 +7,7 @@ import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
 import AdminGenerator from './pages/generators/AdminGenerator';
 import QuestionBankGenerator from './pages/generators/QuestionBankGenerator';
+import PesantrenBankGenerator from './pages/generators/PesantrenBankGenerator';
 import ECourseGenerator from './pages/generators/ECourseGenerator';
 import Results from './pages/Results';
 import ImageLab from './pages/ai-lab/ImageLab';
@@ -25,6 +27,7 @@ const AppRoutes = () => (
     <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
     <Route path="/generator/administrasi" element={<ProtectedRoute><AdminGenerator /></ProtectedRoute>} />
     <Route path="/generator/bank-soal" element={<ProtectedRoute><QuestionBankGenerator /></ProtectedRoute>} />
+    <Route path="/generator/bank-soal-pesantren" element={<ProtectedRoute><PesantrenBankGenerator /></ProtectedRoute>} />
     <Route path="/generator/ecourse" element={<ProtectedRoute><ECourseGenerator /></ProtectedRoute>} />
     <Route path="/results" element={<ProtectedRoute><Results /></ProtectedRoute>} />
     

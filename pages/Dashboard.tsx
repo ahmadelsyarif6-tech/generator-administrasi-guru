@@ -1,7 +1,8 @@
+
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { FileText, BookOpen, Video, Image, Mic, Activity, Bell, ExternalLink, Clock, Trash2, File, Calendar as CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { FileText, BookOpen, Video, Image, Mic, Activity, Bell, ExternalLink, Clock, Trash2, File, Calendar as CalendarIcon, ChevronLeft, ChevronRight, ScrollText } from 'lucide-react';
 import { Card } from '../components/UI';
 import { GeneratedResult } from '../types';
 
@@ -126,7 +127,8 @@ const Dashboard: React.FC = () => {
 
   const modules = [
     { title: 'Administrasi Guru', icon: FileText, desc: 'Modul ajar, Prota, Promes, ATP otomatis.', path: '/generator/administrasi', color: 'text-blue-400', bg: 'bg-blue-500/10' },
-    { title: 'Bank Soal Adaptif', icon: BookOpen, desc: 'HOTS, Pilihan Ganda, Essay, Format Pesantren.', path: '/generator/bank-soal', color: 'text-green-400', bg: 'bg-green-500/10' },
+    { title: 'Bank Soal Umum', icon: BookOpen, desc: 'Kurikulum Merdeka, HOTS, PG, Essay.', path: '/generator/bank-soal', color: 'text-indigo-400', bg: 'bg-indigo-500/10' },
+    { title: 'Bank Soal Pesantren', icon: ScrollText, desc: 'Format Arab Pegon, RTL, Alif-Zay.', path: '/generator/bank-soal-pesantren', color: 'text-green-400', bg: 'bg-green-500/10' },
     { title: 'Generator E-Course', icon: Video, desc: 'Silabus, Materi Slide, Rencana Pembelajaran.', path: '/generator/ecourse', color: 'text-purple-400', bg: 'bg-purple-500/10' },
   ];
 
@@ -152,14 +154,14 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Generator Modules Grid */}
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-4 gap-6">
         {modules.map((mod) => (
             <Link to={mod.path} key={mod.title} className="group">
                 <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 hover:border-indigo-500 transition-all hover:shadow-lg hover:shadow-indigo-500/10 h-full">
                     <div className={`w-12 h-12 rounded-lg ${mod.bg} ${mod.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
                         <mod.icon size={24} />
                     </div>
-                    <h3 className="text-xl font-semibold text-white mb-2">{mod.title}</h3>
+                    <h3 className="text-lg font-semibold text-white mb-2">{mod.title}</h3>
                     <p className="text-slate-400 text-sm">{mod.desc}</p>
                 </div>
             </Link>
