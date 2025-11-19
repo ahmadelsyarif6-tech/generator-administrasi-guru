@@ -22,6 +22,7 @@ export const Input: React.FC<React.InputHTMLAttributes<HTMLInputElement> & { lab
   <div className="flex flex-col gap-1 mb-4">
     {label && <label className="text-sm text-slate-400">{label}</label>}
     <input 
+      dir="auto"
       className={`bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full ${className}`}
       {...props}
     />
@@ -60,6 +61,7 @@ export const DataListInput: React.FC<{
             <input
                 id={id}
                 list={`${id}-list`}
+                dir="auto"
                 className="bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full"
                 placeholder={placeholder}
                 value={value}
