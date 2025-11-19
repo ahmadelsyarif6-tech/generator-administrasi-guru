@@ -42,11 +42,10 @@ const PesantrenBankGenerator: React.FC = () => {
         structurePrompt = `
     STRUKTUR KHUSUS "AL-INSYA" (4 BAGIAN - BERHARAKAT):
     1. HEADER (KOP):
-       - Logo placeholder kiri atas.
        - Teks Tengah: "مَعْهَدُ الْغَزَالِي الْعَصْرِيِّ لِلتَّرْبِيَةِ الْإِسْلَامِيَّةِ الْحَدِيْثَةِ"
        - Bawahnya: "تْشُوْرُوْغْ غُوْنُوْنْجْ سِيْنْدُوْرْ بُوْكُوْرْ جَاوِي الْغَرْبِيَّةِ"
        - Judul: "الِامْتِحَانُ التَّحْرِيْرِيُّ..."
-       - Tabel Identitas: الْمَادَّةُ (Insya), الْيَوْمُ, الْحِصَّةُ, الْفَصْلُ.
+       - Tabel Identitas: الْمَادَّةُ (Insya), الْيَوْمُ, الْحِصَّةُ, الْفَصْلُ. (Gunakan tabel width=100%)
 
     2. ISI SOAL (WAJIB BERHARAKAT):
        أ. Bagian Alif: أَكْمِلِ الفَرَاغَ... (Melengkapi Kalimat - 5 Soal).
@@ -58,6 +57,7 @@ const PesantrenBankGenerator: React.FC = () => {
         structurePrompt = `
     STRUKTUR STANDAR PESANTREN (7 BAGIAN / ALIF-ZAY - BERHARAKAT):
     1. HEADER (KOP) SAMA SEPERTI DI ATAS (Ma'had Al-Ghozali).
+    - Pastikan tabel identitas menggunakan <table style="width:100%; direction:rtl;">.
 
     2. ISI SOAL (Gunakan penomoran Abjadiyah Arab: أ، ب، ج، د، هـ، و، ز):
        أ. Bagian Alif (أ): Al-Mufradat / Kosakata (أَكْمِلِ الْفَرَاغَ / هَاتِ مُفْرَدَاتِ...).
@@ -82,6 +82,7 @@ const PesantrenBankGenerator: React.FC = () => {
     ${harakatInstruction}
     
     Output WAJIB format HTML dengan 'dir="rtl"' (Right-to-Left) untuk bagian Arab.
+    Pastikan semua tabel memiliki style="width:100%; border-collapse:collapse; border:1px solid black;" agar rapi saat dicetak.
     
     ${structurePrompt}
     

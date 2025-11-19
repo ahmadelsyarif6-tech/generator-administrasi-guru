@@ -31,17 +31,77 @@ const Results: React.FC = () => {
   }, [navigate]);
 
   const handleDownload = () => {
-      // Create a complete HTML document with Word-specific namespaces
-      const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
-            "xmlns:w='urn:schemas-microsoft-com:office:word' " +
-            "xmlns='http://www.w3.org/TR/REC-html40'>" +
-            "<head><meta charset='utf-8'><title>" + data?.title + "</title>" +
-            "<style>body{font-family:'Times New Roman', serif; font-size:12pt;} " +
-            "table{border-collapse:collapse; width:100%;} " +
-            "td, th{border:1px solid #000; padding:8px;}</style></head><body>";
+      // CSS yang sangat spesifik untuk Microsoft Word dan Cetak A4
+      const cssStyles = `
+        @page {
+            size: A4;
+            margin: 2.54cm 2.54cm 2.54cm 2.54cm; /* Margin Standar Word */
+        }
+        body {
+            font-family: 'Times New Roman', serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            color: #000;
+            background: #fff;
+        }
+        h1, h2, h3 { text-align: center; margin-bottom: 1em; }
+        
+        /* TABEL SUPER RAPI */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+            margin-bottom: 1em;
+            table-layout: fixed; /* Memaksa tabel patuh pada lebar halaman */
+        }
+        th, td {
+            border: 1px solid #000; /* Border Hitam Tegas */
+            padding: 6px 8px;
+            vertical-align: top;
+            word-wrap: break-word; /* Mencegah teks panjang menabrak margin */
+            overflow-wrap: break-word;
+        }
+        th {
+            background-color: #f0f0f0; /* Abu-abu tipis untuk header agar jelas */
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        /* SUPERSCRIPT / SUBSCRIPT */
+        sup { vertical-align: super; font-size: smaller; }
+        sub { vertical-align: sub; font-size: smaller; }
+
+        /* RTL Support */
+        .rtl, [dir="rtl"] {
+            direction: rtl;
+            text-align: right;
+            font-family: 'Traditional Arabic', 'Amiri', serif;
+            font-size: 14pt;
+        }
+        
+        /* Utilities */
+        hr { border: 0; border-top: 2px solid #000; margin: 20px 0; }
+        img { max-width: 100%; height: auto; }
+      `;
+
+      const header = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' 
+              xmlns:w='urn:schemas-microsoft-com:office:word' 
+              xmlns='http://www.w3.org/TR/REC-html40'>
+        <head>
+            <meta charset='utf-8'>
+            <title>${data?.title}</title>
+            <style>${cssStyles}</style>
+        </head>
+        <body>
+      `;
       
       const footer = "</body></html>";
-      const sourceHTML = header + content + footer;
+      
+      // Wrap content in a div container specifically for Word width constraint
+      const processedContent = `<div style="width:100%; max-width:100%;">${content}</div>`;
+      
+      const sourceHTML = header + processedContent + footer;
 
       const blob = new Blob(['\ufeff', sourceHTML], {
           type: 'application/msword'
@@ -50,7 +110,7 @@ const Results: React.FC = () => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${data?.title || 'Dokumen'}.doc`; // .doc opens more reliably as HTML-Word than .docx without heavy libraries
+      a.download = `${data?.title || 'Dokumen'}.doc`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -61,7 +121,7 @@ const Results: React.FC = () => {
       
       const historyItem = {
           ...data,
-          content: content, // Save the edited content
+          content: content,
           id: crypto.randomUUID(),
           createdAt: new Date()
       };
@@ -74,7 +134,6 @@ const Results: React.FC = () => {
           history = [];
       }
       
-      // Add to top of list
       const newHistory = [historyItem, ...history];
       localStorage.setItem('documentHistory', JSON.stringify(newHistory));
       
@@ -86,11 +145,10 @@ const Results: React.FC = () => {
       if (isPlaying) return;
       setIsPlaying(true);
       try {
-          // Extract text from HTML for TTS
           const tempDiv = document.createElement('div');
           tempDiv.innerHTML = content;
           const text = tempDiv.textContent || "";
-          const shortText = text.substring(0, 500); // Limit for demo
+          const shortText = text.substring(0, 500);
 
           const audioBuffer = await textToSpeech(shortText);
           if (audioBuffer) {
@@ -131,7 +189,7 @@ const Results: React.FC = () => {
                     {saved ? 'Tersimpan' : 'Simpan'}
                 </Button>
                 <Button onClick={handleDownload}>
-                    <Download size={18} /> Download Word
+                    <Download size={18} /> Download Word (Rapi)
                 </Button>
             </div>
         </div>
@@ -146,8 +204,10 @@ const Results: React.FC = () => {
                             onChange={(e) => setContent(e.target.value)}
                         />
                     ) : (
+                        /* Preview Container with specific padding to mimic A4 */
                         <div 
-                            className="prose max-w-none p-6"
+                            className="prose max-w-none p-8 md:p-12 bg-white shadow-sm"
+                            style={{ minHeight: '29.7cm' }}
                             dangerouslySetInnerHTML={{ __html: content }}
                         />
                     )}

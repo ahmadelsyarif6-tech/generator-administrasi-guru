@@ -77,31 +77,28 @@ const AdminGenerator: React.FC = () => {
     
     ${harakatInstruction}
 
-    Instruksi Format:
-    1. Buatkan SEMUA jenis dokumen yang diminta di atas dalam satu respon ini.
-    2. Pisahkan setiap dokumen dengan tag <hr> dan Judul Dokumen (<h1>) yang jelas agar mudah dibaca.
-    3. Gunakan format HTML yang rapi dengan tabel (border css inline) jika diperlukan.
-    4. PENTING: Gunakan ${formData.bahasa} untuk seluruh isi konten dokumen (kecuali istilah teknis yang tidak bisa diterjemahkan).
-    
-    INSTRUKSI KHUSUS NOTASI MATEMATIKA & SAINS (WAJIB):
-    - JANGAN GUNAKAN simbol '^' untuk pangkat (seperti x^2).
-    - JANGAN GUNAKAN format LaTeX atau Markdown.
-    - GUNAKAN tag HTML <sup> untuk pangkat/superscript. Contoh: Tulis x<sup>2</sup> (bukan x^2), m/s<sup>2</sup>.
-    - GUNAKAN tag HTML <sub> untuk indeks/subscript kimia/fisika. Contoh: Tulis H<sub>2</sub>O, CO<sub>2</sub>, F<sub>1</sub>.
-    - Pastikan rumus tertulis dengan notasi umum yang rapi.
+    INSTRUKSI FORMAT TABEL & LAYOUT (WAJIB DIPATUHI AGAR RAPI):
+    1. Gunakan tag <table style="width:100%; border-collapse:collapse; border:1px solid black;">.
+    2. Header tabel <th> harus ada background abu-abu tipis (#f0f0f0).
+    3. JANGAN MEMBUAT KOLOM TERLALU BANYAK yang menyebabkan tabel melebar keluar halaman.
+    4. Jika tabel panjang (seperti Prota/Promes), pastikan strukturnya efisien.
+    5. Pisahkan setiap dokumen dengan tag <hr style="border: 2px solid black; margin: 30px 0;"> dan Judul Dokumen (<h1>) yang di-center.
+
+    INSTRUKSI KHUSUS NOTASI MATEMATIKA & SAINS:
+    - JANGAN GUNAKAN simbol '^' untuk pangkat. Gunakan <sup> (x<sup>2</sup>).
+    - JANGAN GUNAKAN simbol '_' untuk indeks. Gunakan <sub> (H<sub>2</sub>O).
 
     ${formData.modeCerdas ? '5. Sertakan analisis mendalam, strategi pembelajaran diferensiasi, dan profil pelajar pancasila untuk setiap bagian yang relevan.' : ''}
     
-    Output hanya kode HTML body content (tanpa <html> atau <head>).`;
+    Output hanya kode HTML body content.`;
 
     try {
       const result = await generateTextContentStream(
           prompt, 
           (chunk) => {
-             // Update the log with the latest chunk, keeping only the tail if it gets too long for performance
              setStreamLog(prev => prev + chunk);
           },
-          "Anda adalah asisten administrasi guru ahli Kurikulum Merdeka."
+          "Anda adalah asisten administrasi guru ahli Kurikulum Merdeka yang sangat rapi dalam membuat tabel."
       );
 
       if (result) {

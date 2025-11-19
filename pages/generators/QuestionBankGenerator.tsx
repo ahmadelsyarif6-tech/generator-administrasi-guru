@@ -104,11 +104,11 @@ const QuestionBankGenerator: React.FC = () => {
     - ${formData.difficulty}
     ${formData.difficulty === 'Sulit (HOTS)' ? '(Prioritaskan stimulus data, grafik, dan studi kasus)' : ''}
 
-    INSTRUKSI STYLE & LAYOUT (CSS MINIMALIS):
+    INSTRUKSI STYLE & LAYOUT (CSS MINIMALIS & RAPI):
     - Gunakan Font: Times New Roman, serif (Standar Akademik).
     - Warna: HITAM PUTIH (Grayscale) sepenuhnya. JANGAN gunakan background-color warna-warni pada tabel/header.
-    - Tabel: Border tipis hitam (1px solid black), collapse.
-    - Layout: Bersih, Rapi, Siap Cetak (Print Friendly).
+    - TABEL KISI-KISI: WAJIB gunakan <table style="width:100%; border-collapse:collapse; border:1px solid black;">.
+    - Layout: Bersih, Rapi, Siap Cetak (Print Friendly) di kertas A4 dengan margin standar.
 
     INSTRUKSI PENULISAN NOTASI (WAJIB):
     1. PANGKAT: Gunakan HTML <sup> (x<sup>2</sup>). JANGAN '^'.
@@ -116,7 +116,7 @@ const QuestionBankGenerator: React.FC = () => {
 
     TUGAS ANDA ADALAH MENGHASILKAN DOKUMEN LENGKAP DALAM SATU OUTPUT HTML:
     1. NASKAH SOAL (Gunakan <ol> untuk nomor soal, dan <ol type="A"> untuk opsi)
-    2. KISI-KISI SOAL (Tabel Hitam Putih: No, Materi, Indikator, Level Kognitif, No Soal)
+    2. KISI-KISI SOAL (Tabel Hitam Putih Rapi)
     3. KUNCI JAWABAN & PEMBAHASAN DETAIL
     4. RUBRIK PENILAIAN
 
