@@ -18,11 +18,20 @@ const ECourseGenerator: React.FC = () => {
     setLoading(true);
     setStreamLog("Memulai penyusunan kurikulum...");
     
+    const harakatInstruction = language === 'Bahasa Arab' ? `
+    ATURAN PENULISAN BAHASA ARAB:
+    - MATERI SLIDE & PENJELASAN WAJIB MENGGUNAKAN BAHASA ARAB FUSHA DENGAN HARAKAT LENGKAP (Vocalized).
+    - JANGAN gunakan Arab gundul agar mudah dibaca siswa.
+    - Gunakan istilah teknis yang tepat.
+    ` : '';
+
     const prompt = `Buatkan struktur E-Course lengkap untuk topik: "${topic}".
     - Target Audiens: ${target}.
     - Jumlah Pertemuan: ${meetings}.
     - Bahasa Pengantar: ${language}.
     
+    ${harakatInstruction}
+
     Instruksi Format Notasi Ilmiah (Matematika/Fisika/Kimia):
     - Gunakan tag HTML <sup> untuk pangkat (contoh: x<sup>2</sup>). Jangan gunakan simbol '^'.
     - Gunakan tag HTML <sub> untuk indeks (contoh: H<sub>2</sub>O). Jangan gunakan simbol '_'.

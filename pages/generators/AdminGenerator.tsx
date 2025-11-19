@@ -58,6 +58,13 @@ const AdminGenerator: React.FC = () => {
     setLoading(true);
     setStreamLog("Mengirim permintaan ke server AI...");
     
+    const harakatInstruction = formData.bahasa === 'Bahasa Arab' ? `
+    ATURAN PENULISAN BAHASA ARAB:
+    - SELURUH KONTEN (Tujuan, Materi, Kegiatan) WAJIB menggunakan Bahasa Arab FUSHA dengan HARAKAT LENGKAP (Vocalized Arabic).
+    - Jangan gunakan Arab gundul.
+    - Gunakan istilah pedagogi Arab yang baku (misal: الأَهْدَافُ التَّعْلِيْمِيَّةُ, الأَنْشِطَةُ, التَّقْيِيْمُ).
+    ` : '';
+
     const prompt = `Buatkan paket dokumen administrasi guru yang terdiri dari: ${selectedDocTypes.join(', ')}.
     
     Detail Administrasi:
@@ -68,6 +75,8 @@ const AdminGenerator: React.FC = () => {
     - Topik/Materi: ${formData.topik}
     - Bahasa Dokumen: ${formData.bahasa}
     
+    ${harakatInstruction}
+
     Instruksi Format:
     1. Buatkan SEMUA jenis dokumen yang diminta di atas dalam satu respon ini.
     2. Pisahkan setiap dokumen dengan tag <hr> dan Judul Dokumen (<h1>) yang jelas agar mudah dibaca.
