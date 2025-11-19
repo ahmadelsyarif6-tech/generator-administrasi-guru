@@ -1,4 +1,5 @@
-import { GoogleGenAI, Modality } from "@google/genai";
+
+import { GoogleGenAI, Modality, GenerateContentResponse } from "@google/genai";
 
 const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY });
 
@@ -18,6 +19,36 @@ export const generateTextContent = async (prompt: string, systemInstruction?: st
     console.error("Gemini Text Error:", error);
     throw error;
   }
+};
+
+// New function for Streaming response
+export const generateTextContentStream = async (
+    prompt: string, 
+    onChunk: (text: string) => void,
+    systemInstruction?: string
+): Promise<string> => {
+    try {
+        const ai = getAI();
+        const responseStream = await ai.models.generateContentStream({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+            config: {
+                systemInstruction: systemInstruction,
+                temperature: 0.7,
+            }
+        });
+
+        let fullText = '';
+        for await (const chunk of responseStream) {
+            const chunkText = (chunk as GenerateContentResponse).text || '';
+            fullText += chunkText;
+            onChunk(chunkText);
+        }
+        return fullText;
+    } catch (error) {
+        console.error("Gemini Stream Error:", error);
+        throw error;
+    }
 };
 
 export const generateImage = async (prompt: string): Promise<string | null> => {

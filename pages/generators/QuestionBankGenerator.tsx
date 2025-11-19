@@ -1,14 +1,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Input, Select, Button, Loader, DataListInput } from '../../components/UI';
-import { generateTextContent } from '../../services/geminiService';
-import { Scroll, Calculator, Layers } from 'lucide-react';
+import { Card, Input, Select, Button, DataListInput, ProgressModal } from '../../components/UI';
+import { generateTextContentStream } from '../../services/geminiService';
+import { Scroll, Calculator } from 'lucide-react';
 import { SUBJECTS } from '../../utils/data';
 
 const QuestionBankGenerator: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [streamLog, setStreamLog] = useState('');
   const [isPesantren, setIsPesantren] = useState(false);
   
   const [formData, setFormData] = useState({
@@ -65,6 +66,7 @@ const QuestionBankGenerator: React.FC = () => {
     }
 
     setLoading(true);
+    setStreamLog("Menghubungkan ke Lab Soal AI...");
 
     const isComplexLevel = ['SMA', 'SMP'].includes(formData.jenjang);
     
@@ -118,6 +120,16 @@ const QuestionBankGenerator: React.FC = () => {
     Gunakan istilah Arab yang relevan jika mapel memungkinkan.
     ` : ''}
 
+    INSTRUKSI PENULISAN NOTASI MATEMATIKA & SAINS (WAJIB DIPATUHI):
+    1. PANGKAT/Eksponen: JANGAN gunakan simbol '^'. WAJIB gunakan tag HTML <sup>.
+       - Salah: x^2, cm^3, 10^-5
+       - Benar: x<sup>2</sup>, cm<sup>3</sup>, 10<sup>-5</sup>
+    2. INDEKS/Subscript: JANGAN gunakan simbol '_'. WAJIB gunakan tag HTML <sub>.
+       - Salah: H_2O, CO_2, x_1
+       - Benar: H<sub>2</sub>O, CO<sub>2</sub>, x<sub>1</sub>
+    3. PECAHAN: Gunakan garis miring biasa (a/b) atau jika kompleks gunakan format teks yang jelas.
+    4. Pastikan rumus fisika dan kimia ditulis dengan format baku dan rapi.
+
     TUGAS ANDA ADALAH MENGHASILKAN 6 BAGIAN DOKUMEN DALAM SATU OUTPUT HTML.
     Pisahkan setiap bagian dengan tag <hr> dan <h2 style="color:#4f46e5; border-bottom:2px solid #ddd; padding-bottom:10px; margin-top:30px;">Judul Bagian</h2>.
     
@@ -151,7 +163,11 @@ const QuestionBankGenerator: React.FC = () => {
     Output hanya body content HTML. Gunakan styling inline CSS agar tabel dan layout rapi saat dicopy ke Word.`;
 
     try {
-      const result = await generateTextContent(prompt, "Anda adalah pembuat soal ujian profesional.");
+      const result = await generateTextContentStream(
+          prompt,
+          (chunk) => setStreamLog(prev => prev + chunk),
+          "Anda adalah pembuat soal ujian profesional. Anda sangat teliti dalam penulisan rumus matematika dan notasi ilmiah."
+      );
       if (result) {
           localStorage.setItem('lastResult', JSON.stringify({
             title: `Bank Soal ${formData.kelas} - ${formData.mapel}`,
@@ -170,6 +186,8 @@ const QuestionBankGenerator: React.FC = () => {
 
   return (
     <div className="max-w-3xl mx-auto">
+      <ProgressModal isOpen={loading} logs={streamLog} />
+
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-white mb-2">Generator Bank Soal</h1>
         <p className="text-slate-400">Buat paket asesmen lengkap dengan distribusi soal yang fleksibel.</p>
@@ -316,7 +334,7 @@ const QuestionBankGenerator: React.FC = () => {
           </div>
 
           <Button type="submit" className="w-full h-12 shadow-lg shadow-indigo-500/20" disabled={loading}>
-             {loading ? <><Loader /> Menghasilkan Paket Soal...</> : 'Generate Bank Soal'}
+             Generate Bank Soal
           </Button>
         </form>
       </Card>

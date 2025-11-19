@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
-import { X, ChevronDown } from 'lucide-react';
+
+import React, { useEffect, useRef } from 'react';
+import { X, ChevronDown, Terminal, Cpu } from 'lucide-react';
 
 export const Button: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: 'primary' | 'secondary' | 'outline' | 'danger' }> = ({ children, variant = 'primary', className = '', ...props }) => {
   const baseStyle = "px-4 py-2 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2";
@@ -115,4 +116,56 @@ export const Modal: React.FC<{ isOpen: boolean; onClose: () => void; title: stri
       </div>
     </div>
   );
+};
+
+export const ProgressModal: React.FC<{ 
+    isOpen: boolean; 
+    logs: string; 
+}> = ({ isOpen, logs }) => {
+    const logRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (logRef.current) {
+            logRef.current.scrollTop = logRef.current.scrollHeight;
+        }
+    }, [logs, isOpen]);
+
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+            <div className="bg-slate-900 border border-indigo-500/30 rounded-2xl shadow-2xl w-full max-w-2xl relative overflow-hidden flex flex-col max-h-[80vh]">
+                
+                {/* Header */}
+                <div className="flex items-center justify-between p-6 border-b border-slate-800 bg-slate-900/50">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-indigo-500/20 rounded-lg animate-pulse">
+                            <Cpu className="text-indigo-400" size={24} />
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-bold text-white">AI Sedang Bekerja...</h3>
+                            <p className="text-sm text-indigo-300">Menghubungkan ke Gemini 2.5 Flash</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Visualization Area */}
+                <div className="bg-black/50 p-6 font-mono text-sm md:text-base text-green-400 overflow-y-auto flex-1 min-h-[300px]" ref={logRef}>
+                     <div className="flex items-center gap-2 text-slate-500 mb-4">
+                        <Terminal size={16} />
+                        <span>System Output Stream</span>
+                     </div>
+                     <div className="whitespace-pre-wrap leading-relaxed">
+                        {logs || "Menginisialisasi permintaan..."}
+                        <span className="inline-block w-2 h-4 bg-green-500 ml-1 animate-blink"></span>
+                     </div>
+                </div>
+
+                {/* Footer Status */}
+                <div className="p-4 border-t border-slate-800 bg-slate-900 text-center">
+                    <p className="text-slate-400 text-sm">Mohon tunggu sebentar, dokumen sedang disusun secara real-time.</p>
+                </div>
+            </div>
+        </div>
+    );
 };

@@ -1,12 +1,13 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Input, Select, Button, Loader } from '../../components/UI';
-import { generateTextContent } from '../../services/geminiService';
+import { Card, Input, Select, Button, ProgressModal } from '../../components/UI';
+import { generateTextContentStream } from '../../services/geminiService';
 
 const ECourseGenerator: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [streamLog, setStreamLog] = useState('');
   const [topic, setTopic] = useState('');
   const [meetings, setMeetings] = useState('4');
   const [target, setTarget] = useState('Siswa SMA');
@@ -15,12 +16,18 @@ const ECourseGenerator: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setStreamLog("Memulai penyusunan kurikulum...");
     
     const prompt = `Buatkan struktur E-Course lengkap untuk topik: "${topic}".
     - Target Audiens: ${target}.
     - Jumlah Pertemuan: ${meetings}.
     - Bahasa Pengantar: ${language}.
     
+    Instruksi Format Notasi Ilmiah (Matematika/Fisika/Kimia):
+    - Gunakan tag HTML <sup> untuk pangkat (contoh: x<sup>2</sup>). Jangan gunakan simbol '^'.
+    - Gunakan tag HTML <sub> untuk indeks (contoh: H<sub>2</sub>O). Jangan gunakan simbol '_'.
+    - Gunakan format yang mudah dibaca.
+
     Output harus berupa HTML dengan struktur:
     1. Silabus Kursus (Deskripsi, Tujuan).
     2. Rencana Pembelajaran per pertemuan (Tabel).
@@ -29,7 +36,11 @@ const ECourseGenerator: React.FC = () => {
     `;
 
     try {
-      const result = await generateTextContent(prompt);
+      const result = await generateTextContentStream(
+          prompt,
+          (chunk) => setStreamLog(prev => prev + chunk)
+      );
+      
       if (result) {
           localStorage.setItem('lastResult', JSON.stringify({
             title: `E-Course: ${topic}`,
@@ -48,6 +59,8 @@ const ECourseGenerator: React.FC = () => {
 
   return (
     <div className="max-w-3xl mx-auto">
+        <ProgressModal isOpen={loading} logs={streamLog} />
+        
         <div className="mb-8">
             <h1 className="text-3xl font-bold text-white mb-2">Generator E-Course</h1>
             <p className="text-slate-400">Rancang kurikulum kursus, materi, dan slide presentasi sekaligus.</p>
@@ -74,7 +87,7 @@ const ECourseGenerator: React.FC = () => {
                 <Input label="Target Audiens" value={target} onChange={e => setTarget(e.target.value)} />
                 
                 <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? <><Loader /> Merancang Kursus...</> : 'Generate E-Course'}
+                    Generate E-Course
                 </Button>
             </form>
         </Card>

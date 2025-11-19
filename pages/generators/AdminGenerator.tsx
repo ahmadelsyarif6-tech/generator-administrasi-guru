@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Input, Button, Loader, DataListInput, Select } from '../../components/UI';
-import { generateTextContent } from '../../services/geminiService';
+import { Card, Input, Button, DataListInput, Select, ProgressModal } from '../../components/UI';
+import { generateTextContentStream } from '../../services/geminiService';
 import { Sparkles, CheckSquare, Square, Calendar } from 'lucide-react';
 import { SUBJECTS, TEACHERS } from '../../utils/data';
 
@@ -18,6 +18,7 @@ const DOC_TYPES = [
 const AdminGenerator: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [streamLog, setStreamLog] = useState(''); // State for streaming text
   const [formData, setFormData] = useState({
     jenjang: 'SMA',
     kelas: '10',
@@ -55,6 +56,7 @@ const AdminGenerator: React.FC = () => {
     }
 
     setLoading(true);
+    setStreamLog("Mengirim permintaan ke server AI...");
     
     const prompt = `Buatkan paket dokumen administrasi guru yang terdiri dari: ${selectedDocTypes.join(', ')}.
     
@@ -71,12 +73,28 @@ const AdminGenerator: React.FC = () => {
     2. Pisahkan setiap dokumen dengan tag <hr> dan Judul Dokumen (<h1>) yang jelas agar mudah dibaca.
     3. Gunakan format HTML yang rapi dengan tabel (border css inline) jika diperlukan.
     4. PENTING: Gunakan ${formData.bahasa} untuk seluruh isi konten dokumen (kecuali istilah teknis yang tidak bisa diterjemahkan).
+    
+    INSTRUKSI KHUSUS NOTASI MATEMATIKA & SAINS (WAJIB):
+    - JANGAN GUNAKAN simbol '^' untuk pangkat (seperti x^2).
+    - JANGAN GUNAKAN format LaTeX atau Markdown.
+    - GUNAKAN tag HTML <sup> untuk pangkat/superscript. Contoh: Tulis x<sup>2</sup> (bukan x^2), m/s<sup>2</sup>.
+    - GUNAKAN tag HTML <sub> untuk indeks/subscript kimia/fisika. Contoh: Tulis H<sub>2</sub>O, CO<sub>2</sub>, F<sub>1</sub>.
+    - Pastikan rumus tertulis dengan notasi umum yang rapi.
+
     ${formData.modeCerdas ? '5. Sertakan analisis mendalam, strategi pembelajaran diferensiasi, dan profil pelajar pancasila untuk setiap bagian yang relevan.' : ''}
     
     Output hanya kode HTML body content (tanpa <html> atau <head>).`;
 
     try {
-      const result = await generateTextContent(prompt, "Anda adalah asisten administrasi guru ahli Kurikulum Merdeka.");
+      const result = await generateTextContentStream(
+          prompt, 
+          (chunk) => {
+             // Update the log with the latest chunk, keeping only the tail if it gets too long for performance
+             setStreamLog(prev => prev + chunk);
+          },
+          "Anda adalah asisten administrasi guru ahli Kurikulum Merdeka."
+      );
+
       if (result) {
           const title = selectedDocTypes.length > 1 
             ? `Paket Administrasi (${selectedDocTypes.length} Dokumen) - ${formData.mapel}`
@@ -87,7 +105,7 @@ const AdminGenerator: React.FC = () => {
             content: result,
             type: 'ADMINISTRASI',
             date: new Date().toISOString(),
-            deadline: formData.deadline // Save the deadline
+            deadline: formData.deadline
           }));
           navigate('/results');
       }
@@ -100,6 +118,8 @@ const AdminGenerator: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto">
+      <ProgressModal isOpen={loading} logs={streamLog} />
+      
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-white mb-2">Generator Administrasi</h1>
         <p className="text-slate-400">Buat dokumen Prota, Promes, Modul Ajar, dan ATP secara massal.</p>
@@ -234,14 +254,7 @@ const AdminGenerator: React.FC = () => {
           </div>
 
           <Button type="submit" className="w-full h-14 text-lg font-bold shadow-xl" disabled={loading}>
-            {loading ? (
-                <div className="flex items-center gap-3">
-                    <Loader /> 
-                    <span>Sedang Menyusun {selectedDocTypes.length} Dokumen...</span>
-                </div>
-            ) : (
-                `Generate ${selectedDocTypes.length > 0 ? selectedDocTypes.length : ''} Dokumen Terpilih`
-            )}
+            {`Generate ${selectedDocTypes.length > 0 ? selectedDocTypes.length : ''} Dokumen Terpilih`}
           </Button>
         </form>
       </Card>
