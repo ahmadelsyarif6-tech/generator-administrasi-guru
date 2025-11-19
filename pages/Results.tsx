@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { GeneratedResult } from '../types';
 import { Card, Button } from '../components/UI';

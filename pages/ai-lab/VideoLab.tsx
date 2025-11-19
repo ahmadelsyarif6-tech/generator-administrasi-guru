@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, Button, Loader } from '../../components/UI';
 import { generateVideo } from '../../services/geminiService';

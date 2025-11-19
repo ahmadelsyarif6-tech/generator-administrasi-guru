@@ -93,21 +93,30 @@ const QuestionBankGenerator: React.FC = () => {
     
     ${distributionPrompt}
 
-    PENGATURAN OPSI JAWABAN:
-    - Untuk soal Pilihan Ganda (PG), buatkan **${formData.pgOptionCount} opsi jawaban** (${Array.from({length: parseInt(formData.pgOptionCount)}, (_, i) => String.fromCharCode(65 + i)).join(', ')}).
-    - Pastikan kunci jawaban akurat.
+    PENGATURAN OPSI JAWABAN (PENTING & STRICT):
+    - HINDARI LABEL GANDA.
+    - SALAH: "A. A. Jawaban" atau "A. a. Jawaban".
+    - BENAR: "A. Jawaban".
+    - Gunakan tag HTML <ol type="A"> untuk opsi jawaban agar penomoran otomatis rapi dan tidak dobel.
+    - Buatkan **${formData.pgOptionCount} opsi jawaban** per soal.
 
     TINGKAT KESULITAN:
     - ${formData.difficulty}
     ${formData.difficulty === 'Sulit (HOTS)' ? '(Prioritaskan stimulus data, grafik, dan studi kasus)' : ''}
+
+    INSTRUKSI STYLE & LAYOUT (CSS MINIMALIS):
+    - Gunakan Font: Times New Roman, serif (Standar Akademik).
+    - Warna: HITAM PUTIH (Grayscale) sepenuhnya. JANGAN gunakan background-color warna-warni pada tabel/header.
+    - Tabel: Border tipis hitam (1px solid black), collapse.
+    - Layout: Bersih, Rapi, Siap Cetak (Print Friendly).
 
     INSTRUKSI PENULISAN NOTASI (WAJIB):
     1. PANGKAT: Gunakan HTML <sup> (x<sup>2</sup>). JANGAN '^'.
     2. INDEKS: Gunakan HTML <sub> (H<sub>2</sub>O). JANGAN '_'.
 
     TUGAS ANDA ADALAH MENGHASILKAN DOKUMEN LENGKAP DALAM SATU OUTPUT HTML:
-    1. NASKAH SOAL (Siap Cetak)
-    2. KISI-KISI SOAL (Tabel: No, Materi, Indikator, Level Kognitif, No Soal)
+    1. NASKAH SOAL (Gunakan <ol> untuk nomor soal, dan <ol type="A"> untuk opsi)
+    2. KISI-KISI SOAL (Tabel Hitam Putih: No, Materi, Indikator, Level Kognitif, No Soal)
     3. KUNCI JAWABAN & PEMBAHASAN DETAIL
     4. RUBRIK PENILAIAN
 
@@ -118,7 +127,7 @@ const QuestionBankGenerator: React.FC = () => {
       const result = await generateTextContentStream(
           prompt,
           (chunk) => setStreamLog(prev => prev + chunk),
-          "Anda adalah pembuat soal ujian standar nasional."
+          "Anda adalah pembuat soal ujian standar nasional yang sangat rapi."
       );
       if (result) {
           localStorage.setItem('lastResult', JSON.stringify({

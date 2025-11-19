@@ -61,7 +61,7 @@ export const generateImage = async (prompt: string): Promise<string | null> => {
       config: {
         numberOfImages: 1,
         outputMimeType: 'image/jpeg',
-        aspectRatio: '16:9',
+        aspectRatio: '1:1',
       },
     });
     const base64ImageBytes = response.generatedImages?.[0]?.image?.imageBytes;
